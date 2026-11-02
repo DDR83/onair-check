@@ -37,3 +37,7 @@ Done when: presets change results on the same fixture and the config is document
 Publish a composite action so `uses: DDR83/onair-check@v1` runs the checks, adds annotations for findings and uploads the HTML report as an artifact.
 
 Done when: a sample workflow in the repo uses the action on a fixture and uploads the report.
+
+## Playout target profiles (--target casparcg|spx|obs|vmix|browser)
+
+Add a `--target` option that loads a profile adapting the checks to the playout system: supported Chromium/CEF features per target version, the control contract it calls, colour range and RGB to YUV conversion for legal levels, straight vs premultiplied alpha, default formats and frame rates, and offline network rules. Profiles are data files (versioned table per target) so new targets and versions need no code change. See ROADMAP.md, Playout conformance.

@@ -7,6 +7,14 @@ The MVP (v0.1) covers six checks, three reporters and a CLI. Everything below is
 - **Memory and GPU budget.** Sample JS heap, decoded image bytes and layer count via CDP (`Performance.getMetrics`, `LayerTree`), fail above a configurable budget so a template does not starve the playout machine.
 
 ## Playout conformance
+- **Playout target profiles.** `--target casparcg|spx|obs|vmix|browser` selects a profile that adapts every check to the system the graphic will run on:
+  - *Engine:* the Chromium/CEF version each target ships (per release, kept in a versioned table); flag CSS and JavaScript features that version does not support.
+  - *Control contract:* the commands that target sends (see Playout contract below), required for that target, optional elsewhere.
+  - *Colour:* limited vs full range and the target's RGB to YUV conversion, so legal-levels measures what actually goes to air.
+  - *Alpha and keying:* straight vs premultiplied alpha as the target composites it.
+  - *Format:* typical resolutions and frame rates, used as defaults for rendering and frame-time checks.
+  - *Network:* external requests become a hard fail for playout targets that run offline.
+  Profiles live in data files so new targets and versions can be added without code changes.
 - **Playout contract.** Drive the graphic through the CasparCG template protocol (`add`, `play`, `update`, `next`, `stop`, `remove`), the SPX-GC `play`/`stop`/`update` hooks and OBS/vMix browser-source expectations. Fail when `update(data)` throws, when `stop()` never leaves the frame empty, or when the graphic leaves residue after `remove`.
 - **Alpha edge and premultiplied checks.** Detect fringing from straight-vs-premultiplied alpha mismatch, dark/light halos on semi-transparent edges, and alpha that is not 0 in the "empty" state.
 
