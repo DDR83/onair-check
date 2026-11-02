@@ -41,7 +41,9 @@ onair-check <url|file> [--format 1080p50|1080i50|2160p50] [--at 0,500,end]
                        [--json] [--html <file>] [--strict] [--opaque]
 ```
 
-- `--at` times in ms at which to capture. `end` is the end of the longest finite animation. Default `0,end`. Animations are stepped through `document.getAnimations()` (Web Animations, which also covers CSS animations and transitions); pages without any use real time.
+- `--at` times in ms at which to capture. `end` is the end of the longest finite animation. Default `0,end`. Animations are stepped through `document.getAnimations()` (Web Animations, which also covers CSS animations and transitions): running animations are paused at the time, finished ones complete normally so their `finish` handlers run. Pages without any use real time.
+- Seek hook: if the page defines `window.onairSeek(ms)` (or `seek(ms)` / `dsSeek(ms)`), onair-check calls it instead, so graphics driven by their own timeline (GSAP, a custom player) are captured at the exact state. Load such pages without autoplay, so the page's own clock does not override the seek.
+- A completely empty frame gives a `transparency` warning, so a capture time where nothing is on screen cannot pass silently.
 - `--opaque` the graphic is expected to have an opaque background (skips the transparency failure).
 
 ## Example

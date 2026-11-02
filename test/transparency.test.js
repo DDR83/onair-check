@@ -19,6 +19,12 @@ test('transparency: skipped when opaque expected', () => {
   assert.equal(r.status, 'skip');
 });
 
+test('transparency: completely empty frame warns that nothing was tested', () => {
+  const r = check.run({ frame: { rgba: new Uint8Array(100 * 4), width: 10, height: 10 } });
+  assert.equal(r.status, 'warn');
+  assert.match(r.message, /completely empty/);
+});
+
 test('transparency: mostly covered frame warns (synthetic pixels)', () => {
   const rgba = new Uint8Array(100 * 4).fill(255);
   rgba[3] = 0;

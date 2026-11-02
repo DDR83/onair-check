@@ -24,6 +24,14 @@ export function run({ frame, expectTransparent = true }) {
       metrics,
     };
   }
+  if (clear === total) {
+    return {
+      status: 'warn',
+      message:
+        'The frame is completely empty: nothing is on screen at this time, so the other checks pass without testing anything. Pick a time when the graphic is visible, or expose window.onairSeek(ms).',
+      metrics,
+    };
+  }
   if (pct < WARN_BELOW_PCT) {
     return {
       status: 'warn',
