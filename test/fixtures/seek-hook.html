@@ -1,0 +1,8 @@
+<!doctype html>
+<!-- Page with its own timeline: window.onairSeek(ms) draws the state at that time. -->
+<html><head><style>html,body{margin:0;background:transparent}#b{position:absolute;top:100px;width:200px;height:100px;background:#cc0000}</style></head>
+<body><div id="b">Hi</div><script>
+const b = document.getElementById('b');
+window.onairSeek = (ms) => { b.style.left = (ms >= 1000 ? 700 : 100) + 'px'; };
+window.onairSeek(0);
+</script></body></html>

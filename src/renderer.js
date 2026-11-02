@@ -73,13 +73,34 @@ function snapshotElements() {
   return out;
 }
 
-function stepAnimations(t) {
-  const anims = document.getAnimations();
-  for (const a of anims) {
-    a.pause();
-    a.currentTime = t;
+// Runs in the page. Returns how the frame was reached: 'hook', 'waapi' or 'none'.
+// A page can expose its own seek function (window.onairSeek, or the common seek/dsSeek names),
+// which wins because it knows the graphic's timeline. Otherwise WAAPI animations are stepped:
+// animations still running at t are paused there; animations that end before t are finished
+// normally, so 'finish' handlers that commit the final state (commitStyles, class changes) run.
+async function stepAnimations(t) {
+  const hook = ['onairSeek', 'dsSeek', 'seek'].map((k) => window[k]).find((f) => typeof f === 'function');
+  if (hook) {
+    await hook(t);
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    return 'hook';
   }
-  return anims.length;
+  const anims = document.getAnimations();
+  if (!anims.length) return 'none';
+  const finishing = [];
+  for (const a of anims) {
+    const end = a.effect && a.effect.getComputedTiming().endTime;
+    if (Number.isFinite(end) && t >= end) {
+      finishing.push(a.finished.catch(() => {}));
+      a.finish();
+    } else {
+      a.pause();
+      a.currentTime = t;
+    }
+  }
+  await Promise.all(finishing);
+  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+  return 'waapi';
 }
 
 function animationsEnd() {
@@ -129,8 +150,8 @@ export async function openPage(target, { format, browserPath } = {}) {
   let usesAnimations = null;
 
   async function capture(t) {
-    const n = await page.evaluate(stepAnimations, t).catch(() => 0);
-    usesAnimations = n > 0;
+    const mode = await page.evaluate(stepAnimations, t).catch(() => 'none');
+    usesAnimations = mode !== 'none';
     if (!usesAnimations) {
       const wait = t - (Date.now() - loadedAt);
       if (wait > 0) await page.waitForTimeout(wait);

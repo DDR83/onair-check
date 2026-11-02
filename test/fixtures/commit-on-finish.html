@@ -1,0 +1,8 @@
+<!doctype html>
+<!-- Animation without fill: the page commits the final state in a finish handler, then cancels it. -->
+<html><head><style>html,body{margin:0;background:transparent}#b{position:absolute;left:100px;top:100px;width:200px;height:100px;background:#cc0000;opacity:0}</style></head>
+<body><div id="b">Hi</div><script>
+const b = document.getElementById('b');
+const a = b.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 500 });
+a.onfinish = () => { b.style.opacity = '1'; a.cancel(); };
+</script></body></html>
