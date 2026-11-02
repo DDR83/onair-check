@@ -18,3 +18,5 @@ jobs:
       - name: Chrome version (preinstalled on the runner)
         run: google-chrome --version
       - run: npm test
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
