@@ -1,0 +1,14 @@
+{
+  "name": "onair-check",
+  "version": "0.1.0",
+  "description": "On-air QA linter for HTML broadcast graphics: safe areas, legal levels, interlace flicker, text legibility, offline playout and transparency.",
+  "type": "module",
+  "bin": { "onair-check": "bin/onair-check.js" },
+  "files": ["bin", "src", "README.md", "LICENSE", "NOTICE"],
+  "scripts": { "test": "node --test" },
+  "engines": { "node": ">=18" },
+  "keywords": ["broadcast", "casparcg", "obs", "vmix", "html-graphics", "lint", "qa"],
+  "license": "Apache-2.0",
+  "author": "Didier Naim Defli",
+  "dependencies": { "playwright-core": "1.49.1" }
+}
