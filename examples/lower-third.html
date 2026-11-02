@@ -1,0 +1,17 @@
+<!doctype html>
+<!-- Synthetic demo page with deliberate on-air problems. -->
+<html><head>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap">
+<style>
+html,body{margin:0;background:transparent}
+.bar{position:absolute;left:120px;top:820px;width:900px;height:110px;background:#0b3d91;animation:in .6s ease-out both}
+.name{position:absolute;left:150px;top:830px;font:700 56px Roboto,sans-serif;color:#fff}
+.role{position:absolute;left:150px;top:900px;font:400 18px sans-serif;color:#8a9bc0}
+.rule{position:absolute;left:120px;top:812px;width:900px;height:1px;background:#fff}
+.bug{position:absolute;left:30px;top:24px;font:700 40px sans-serif;color:#fff;background:#c00;padding:4px 10px}
+@keyframes in{from{transform:translateX(-1000px)}to{transform:none}}
+</style></head><body>
+<div class="bar"></div><div class="rule"></div>
+<div class="name">Jane Example</div><div class="role">Reporting from the example stadium</div>
+<div class="bug">LIVE</div>
+</body></html>

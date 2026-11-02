@@ -1,5 +1,7 @@
 # onair-check
 
+[![CI](https://github.com/DDR83/onair-check/actions/workflows/ci.yml/badge.svg)](https://github.com/DDR83/onair-check/actions/workflows/ci.yml)
+
 An on-air QA linter for HTML broadcast graphics. Point it at an overlay, lower third or scoreboard (any CasparCG, OBS or vMix browser source) and it tells you whether the graphic is safe to put on air.
 
 > Status: v0.1 MVP. See [ROADMAP.md](ROADMAP.md) for what is planned.
@@ -41,6 +43,43 @@ onair-check <url|file> [--format 1080p50|1080i50|2160p50] [--at 0,500,end]
 
 - `--at` times in ms at which to capture. `end` is the end of the longest finite animation. Default `0,end`. Animations are stepped through `document.getAnimations()` (Web Animations, which also covers CSS animations and transitions); pages without any use real time.
 - `--opaque` the graphic is expected to have an opaque background (skips the transparency failure).
+
+## Example
+
+A deliberately flawed synthetic lower third, [`examples/lower-third.html`](examples/lower-third.html), checked as 1080i50:
+
+```bash
+node bin/onair-check.js examples/lower-third.html --format 1080i50 --at 0,end --html report.html
+```
+
+```
+onair-check 0.1.0  examples/lower-third.html
+1080i50 1920x1080 interlaced  frames at 0, 600 ms
+
+FAIL  safe-areas         1 text element(s) outside title-safe (90%).
+      @0ms text outside title-safe: div.bug [40,28 89x44]
+      @600ms text outside title-safe: div.bug [40,28 89x44]
+PASS  legal-levels       0.4% of the frame outside luma 16-235.
+FAIL  interlace-flicker  898 px of 1px horizontal lines/detail will flicker on 1080i50. Make lines at least 2px thick or soften them.
+      @0ms 1px horizontal detail [121,812 898x1]
+      @600ms 1px horizontal detail [121,812 898x1]
+WARN  text-size          1 text element(s) below 18px cap height (at 1080).
+      @0ms cap height 12.6px: div.role [150,900 290x20]
+      @600ms cap height 12.6px: div.role [150,900 290x20]
+WARN  text-contrast      1 text element(s) below 4.5:1 contrast (worst 3.6:1).
+      @600ms contrast 3.60:1: div.role [150,900 290x20]
+FAIL  network            1 request(s) to 1 external host(s) (fonts.googleapis.com); these fail offline.
+      stylesheet: https://fonts.googleapis.com/css2?family=Roboto&display=swap
+PASS  transparency       99.14% of the frame is transparent.
+
+FAIL: 2 passed, 2 warnings, 3 failed, 0 skipped
+```
+
+The exit code is 1. The HTML report (frames over a checkerboard, safe areas dashed, findings boxed) looks like this:
+
+![HTML report](docs/example-report.png)
+
+`--json` prints the same result as machine-readable JSON (`status`, `summary`, and per check `frames[].metrics` and `regions`).
 
 ## Tests
 
