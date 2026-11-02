@@ -27,3 +27,13 @@ test('renderer: transparent background, stepped animation', { skip }, async () =
     await s.close();
   }
 });
+
+test('renderer: elements parked entirely off screen are not listed', { skip }, async () => {
+  const s = await openPage(fx('offscreen.html'), { format: getFormat('1080p50') });
+  try {
+    const f = await s.capture(0);
+    assert.deepEqual(f.elements.map((e) => e.selector), ['p#in']);
+  } finally {
+    await s.close();
+  }
+});

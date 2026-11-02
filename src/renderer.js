@@ -29,6 +29,8 @@ function snapshotElements() {
     if (op <= 0.01) continue;
     const r = el.getBoundingClientRect();
     if (r.width <= 0 || r.height <= 0) continue;
+    // Entirely off screen (e.g. parked outside the frame before sliding in): not on air.
+    if (r.right <= 0 || r.bottom <= 0 || r.left >= innerWidth || r.top >= innerHeight) continue;
     const textNodes = [...el.childNodes].filter((n) => n.nodeType === 3 && n.textContent.trim());
     const text = textNodes.map((n) => n.textContent).join(' ').replace(/\s+/g, ' ').trim();
     const m = /rgba\([^)]*,\s*([\d.]+)\)/.exec(cs.backgroundColor);
